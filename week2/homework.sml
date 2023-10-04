@@ -2,17 +2,31 @@
 the first argument is a date that comes before the second argument. (If the two dates are the same,
 the result is false.) *)
 fun is_older(date1 : int * int * int, date2 : int * int * int) : bool =
-    if #1 date1 < #1 date2 orelse
-       #2 date1 < #2 date2 orelse
-       #3 date1 < #3 date2
-    then
-        true
-    else
-        false
+    let
+        val (y1, m1, d1) = date1
+        val (y2, m2, d2) = date2
+    in
+        if y1 < y2 then
+            true
+        else if y1 = y2 then
+            if m1 < m2 then
+                true
+            else if m1 = m2 then
+                if d1 < d2 then
+                    true
+                else
+                    false
+            else
+                false
+        else
+            false
+    end
 
 val is_older_test1 = is_older((2023, 4, 15), (2023, 3, 10)) = false
 val is_older_test2 = is_older((2023, 2, 15), (2023, 3, 10)) = true
 val is_older_test3 = is_older((2023, 2, 09), (2023, 2, 10)) = true
+val is_older_test4 = is_older((2012,2,28), (2011,3,31)) = false
+val is_older_test5 = is_older((2011,3,31), (2012,2,28)) = true
 
 (* 2. Write a function number_in_month that takes a list of dates and a month (i.e., an int) and returns
 how many dates in the list are in the given month. *)
@@ -155,3 +169,22 @@ fun month_range(day1 : int, day2 : int) : int list =
 
 val month_range_test1 = month_range(30, 33) = [1, 1, 2, 2]
 val month_range_test2 = month_range(31, 34) = [1,2,2,2]
+
+(* 11. Write a function oldest that takes a list of dates and evaluates to an (int*int*int) option. It
+evaluates to NONE if the list has no dates and SOME d if the date d is the oldest date in the list. *)
+fun oldest([]) = NONE |
+    oldest(dates: (int * int * int) list) : (int * int * int) option =
+    let
+        fun get_oldest(oldest, []) = SOME oldest |
+            get_oldest(oldest, dates) =
+                if is_older(hd dates, oldest) then
+                    get_oldest(hd dates, tl dates)
+                else
+                    get_oldest(oldest, tl dates)
+    in
+        get_oldest(hd dates, tl dates)
+    end
+
+val oldest_tes1 = oldest([]) = NONE
+val oldest_test2 = oldest([(2021, 3, 16), (2020, 7, 30)]) = SOME (2020, 7, 30)
+val oldest_test3 = oldest([(2012,2,28),(2011,3,31),(2011,4,28)]) = SOME (2011,3,31)
