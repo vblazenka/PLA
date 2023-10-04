@@ -128,9 +128,13 @@ answer to the previous problem. *)
 
 fun what_month(day : int) : int =
     let
-        val days_in_months = [31, 30, 31, 30, 31, 30, 31, 31, 30, 31, 30]
+        val days_in_months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        fun number_before_reaching_sum(n, lst) =
+            if n <= 0 then 0
+            else hd(lst) + number_before_reaching_sum(n - hd(lst), tl(lst))
+        val month_index = number_before_reaching_sum(day, days_in_months)
     in
-        number_before_reaching_sum(day, days_in_months) + 1
+        (month_index + 1) div 30
     end
 
 val what_month_test1 = what_month(35) = 2;
@@ -141,7 +145,7 @@ val what_month_test2 = what_month(70) = 3;
 of day day2. Note the result will have length day2 - day1 + 1 or length 0 if day1>day2. *)
 
 fun month_range(day1 : int, day2 : int) : int list =
-    if day1 > day2 then 0
+    if day1 > day2 then []
     else
         let
             val month = what_month day1
@@ -150,3 +154,4 @@ fun month_range(day1 : int, day2 : int) : int list =
         end
 
 val month_range_test1 = month_range(30, 33) = [1, 1, 2, 2]
+val month_range_test2 = month_range(31, 34) = [1,2,2,2]
