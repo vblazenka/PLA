@@ -127,8 +127,26 @@ what month that day is in (1 for January, 2 for February, etc.). Use a list hold
 answer to the previous problem. *)
 
 fun what_month(day : int) : int =
-    (* TODO *)
-    0
+    let
+        val days_in_months = [31, 30, 31, 30, 31, 30, 31, 31, 30, 31, 30]
+    in
+        number_before_reaching_sum(day, days_in_months) + 1
+    end
 
 val what_month_test1 = what_month(35) = 2;
 val what_month_test2 = what_month(70) = 3;
+
+(* 10. Write a function month_range that takes two days of the year day1 and day2 and returns an int list
+[m1,m2,...,mn] where m1 is the month of day1, m2 is the month of day1+1, ..., and mn is the month
+of day day2. Note the result will have length day2 - day1 + 1 or length 0 if day1>day2. *)
+
+fun month_range(day1 : int, day2 : int) : int list =
+    if day1 > day2 then 0
+    else
+        let
+            val month = what_month day1
+        in
+            month :: month_range(day1+1, day2)
+        end
+
+val month_range_test1 = month_range(30, 33) = [1, 1, 2, 2]
