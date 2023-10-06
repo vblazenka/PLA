@@ -29,15 +29,14 @@ specifically about this, but the other problems are helpful. *)
 string is not in the list, else return SOME lst where lst is identical to the argument list except the string
 is not in it. You may assume the string is in the list at most once. Use same_string, provided to you,
 to compare strings. Sample solution is around 8 lines.*)
-fun all_except_option (str, lst) =
-    case lst of
-        [] => NONE
-        | x::xs' =>
-            if same_string(str, x) then SOME xs'
-            else
-                case all_except_option(str, xs') of
-                    NONE => NONE
-                  | SOME ys' => SOME (x::ys')
+fun all_except_option(_, []) = NONE
+  | all_except_option (str, x::xs') =
+        if same_string(str, x) then
+            SOME xs'
+        else
+            case all_except_option(str, xs') of
+                  NONE     => NONE
+                | SOME ys' => SOME (x::ys')
 
 val all_except_option_test1 = all_except_option("a", []) = NONE
 val all_except_option_test2 = all_except_option("c", ["a", "b"]) = NONE
@@ -57,12 +56,10 @@ get_substitutions1([["Fred","Fredrick"],["Jeff","Jeffrey"],["Geoff","Jeff","Jeff
 (* answer: ["Jeffrey","Geoff","Jeffrey"] *)
 Use part (a) and ML’s list-append (@) but no other helper functions. Sample solution is around 6 lines. *)
 
-fun get_substitutions1(los, s) =
-    case los of
-        [] => []
-      | x::xs' =>
+fun get_substitutions1([], s) = []
+  | get_substitutions1(x::xs', s) =
         case all_except_option(s, x) of
-            NONE => get_substitutions1(xs', s)
+            NONE     => get_substitutions1(xs', s)
           | SOME ys' => ys' @ get_substitutions1(xs', s)
 
 val get_substitutions1_test1 = get_substitutions1([], "Jeff") = []
